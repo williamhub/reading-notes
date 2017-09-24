@@ -47,6 +47,7 @@ image::assets/python_coroutines.png[]
 https://www.youtube.com/watch?v=tpspO9K28PM&list=WL&index=17[Four Distributed Systems Architectural Patterns by Tim Berglund]
 
 * Modern Three-Tier(Presentation Tier, Business Tier, Data Tier)
+
 Weakness: state in the middle tier
 
 image::assets/modern_three_tier.png[]
@@ -70,3 +71,24 @@ image::assets/lamda_architecture.png[]
 * Streaming
 
 image::assets/streaming_architecture.png[]
+
+https://www.confluent.io/blog/publishing-apache-kafka-new-york-times/[Publishing with Apache Kafka at The New York Times]
+
+* API-based architecture issues: inconsistent schema; difficult to stream content archives
+
+* Log-based architecture:
+** databases is difficult to manage in the long run: tricky to change the schema; hard to replace; being complex monoliths.
+** Log-based architecture makes the log the source of truth.
+** Every system can create its own data store (database) – its own materialized view – representing only the data it needs, in the form that is the most useful for that system.
+** Simplifies accessing streams of content.
+** By always redeploying a new instance from scratch instead of modifying a running one, a whole category of problems go away.
+
+* why Kafka not Amazon SQS/SNS and Google Pubsub: only Kafka supports retain all events forever and log consumption to be ordered.
+
+image::assets/kafka_cms_to_elasticsearch.png[]
+
+* The Monolog is new source of truth for published content. Every system that creates content, when it’s ready to be published, will write it to the Monolog, where it is appended to the end.
+* In the denormalized log, all the components making up a top-level asset are published together.
+* Since this log is denormalized, it no longer needs total ordering.
+
+image::assets/kafka_implementation_google_cloud.png[]
