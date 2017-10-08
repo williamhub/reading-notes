@@ -42,7 +42,7 @@ image::assets/python_coroutines.png[]
 
 * Coroutines are `tasks`, but they're not tied to threads or subprocesses.
 
-## Distributed System
+## System Design
 
 https://www.youtube.com/watch?v=tpspO9K28PM&list=WL&index=17[Four Distributed Systems Architectural Patterns by Tim Berglund]
 
@@ -92,3 +92,65 @@ image::assets/kafka_cms_to_elasticsearch.png[]
 * Since this log is denormalized, it no longer needs total ordering.
 
 image::assets/kafka_implementation_google_cloud.png[]
+
+https://martinfowler.com/articles/serverless.html[Serverless Architectures]
+
+* Serverless architectures refer to applications that significantly depend on third-party services (knows as Backend as a Service or "BaaS") or on custom code that's run in ephemeral containers (Function as a Service or "FaaS").
+
+* FaaS's scale is completely transparent.
+
+* Compare with PaaS
+** need to think about scale
+** better tooling, maturity of API gateways, support in-app readonly cache for optimization.
+
+* Compare with Container
+** need to provide auto-scale functionality
+** FaaS is seen as a better choice for event driven style with few event types per application component, and containers are seen as a better choice for synchronous-request driven components with many entry points.
+
+* Stored Procedures as a Service: FaaS functions are small pieces of code that wrap access to a database.
+
+* Benefits
+** Reduced operational cost
+*** Serverless Backend as a Service on the other hand is a result of entire application components being commoditized.
+*** only pay for the compute that you need(occasional requests, inconsistent traffic, optimization is the root of some cost savings)
+** Easier Operational Management
+*** no longer need to even think about the question of how many concurrent requests you can handle before running out of memory or seeing too much of a performance hit
+*** zero system administration
+*** short time to market
+
+* Drawbacks
+** Inherent Drawbacks: vendor control, multitenancy problems, vendor lock-in, security concerns, repetition of logic across client platforms, loss of Server optimizations, no in-server state for Serverless FaaS
+** Implementation Drawbacks: no configuration, limits concurrent executions(AWS Lambda), execution duration(5 minutes), startup latency, hard to integration testing, deployment/packaging/versioning, over-ambitious API Gateways
+
+https://www.infoq.com/articles/AmazonPubSub[Implementing Pub/Sub based on AWS technologies]
+
+* Simple Notification Service: a web service that enables applications, end-users, and devices to instantly send and receive notifications from the cloud.
+
+* Simple Queuing Service: offers reliable and scalable hosted queues for storing messages as they travel between computers.
+** By using Amazon SQS, you can move data between distributed components of your applications that perform different tasks without losing messages or requiring each component to be always available.
+
+* Combining SQS with SNS offers two additional advantages not provided by SNS alone – removing temporal coupling and supporting symmetric load balancing of specific consuming applications.
+
+image::assets/combining_sns_with_sqs.jpg[]
+
+* The main drawback of this implementation is that both publishers and subscribers need to explicitly agree on the names of SNS topics. Additionally, if a given consumer wants to get information from multiple topics, he needs to register his queue to the multiple topics.
+
+* Solution: tree-based topic organization, content-based message filtering
+
+image::assets/proposed_pubsub_architecture.jpg[]
+
+https://herbertograca.com/2017/10/05/event-driven-architecture/[Event-Driven Architecture]
+
+* Decouple components
+** The dispatcher should be a library completely independent of our application and therefore installed in a generic location using a dependency management system.
+** The event is shared between the components and it is part of the core of the application. Events are part of what DDD calls the Shared Kernel.
+
+* Perform async tasks
+
+* Keep track of state changes(audit log)
+** Event Notification: need some logic in other components; event carries minimal data
+** Event-Carried State Transfer: need data from other components; event carry the whole new version of the data
+** Event-Sourcing: event store becomes the principal source of truth; Reversal Transaction; use snapshot to help deriving state; projection(the computation of the events in an event stream from and to specific moments)
+*** Drawback - External updates(events trigger updates in external systems)
+*** Drawback - External Queries(query to an external system)
+*** Drawback - Code Changes(use strategy pattern)
