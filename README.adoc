@@ -154,3 +154,5 @@ https://herbertograca.com/2017/10/05/event-driven-architecture/[Event-Driven Arc
 *** Drawback - External updates(events trigger updates in external systems)
 *** Drawback - External Queries(query to an external system)
 *** Drawback - Code Changes(use strategy pattern)
+
+http://blog.itexus.com/books/Microservices_Designing_Deploying.pdf[Microservices From Design To Deployment]
